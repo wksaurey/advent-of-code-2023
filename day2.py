@@ -14,16 +14,14 @@ for line in open('input/day2.text'):
             isValue = False
         else:
             isValue = True        
-    gamePossible = True
+    linePossibleValues = {'red': 0, 'green': 0, 'blue': 0}
     for valuePair in valuePairs:
         color = valuePair[1]
         value = int(valuePair[0])
         if value > possibleValues[color]:
-            gamePossible = False
             print(f'{value} is too large for color {color}')
             break
-    if(gamePossible):
-        totalIdSum += gameid 
+    totalIdSum += gameid 
     print(f'Sum of Possible Game IDs: {totalIdSum}')
     #print(valuePairs)
     #print(gameid)
