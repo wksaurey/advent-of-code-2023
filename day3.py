@@ -1,20 +1,41 @@
 from util import read_stripped_lines
 
 parts = read_stripped_lines('input/day3.text')
-print(parts)
 gearOne = None
 gearTwo = None
 
 def main():
-    partNumberSum = 0
+    gearRatioSum = 0
     for lineIndex, line in enumerate(parts):
-        numLength = 0
         for index, char in enumerate(line):
-            if numLength != 0:
-                numLength -= 1
-                continue
+            global gearOne
+            global gearTwo
+            if gearOne != None and gearTwo != None:
+                print(f'Gear ratio of {gearOne} and {gearTwo} is {gearOne*gearTwo}')
+                gearRatioSum += (gearOne * gearTwo)
+            gearOne = None
+            gearTwo = None
             if char != '*':
                 continue
+
+            # print 3x3 around * for debug
+            topBuffer = 1
+            bottomBuffer = 1
+            leftBuffer = 3
+            rightBuffer = 3
+            if lineIndex < topBuffer:
+                topBuffer = 0
+            if len(parts)-1 - lineIndex < bottomBuffer:
+                bottomBuffer = 0
+            if index < leftBuffer:
+                leftBuffer = index
+            if len(line)-1 - index < rightBuffer:
+                rightBuffer = index-len(line)-1
+            print('\n+-------+')
+            for tempLineIndex in range(lineIndex-topBuffer, lineIndex+bottomBuffer+1):
+                print(f'|{parts[tempLineIndex][index-leftBuffer:index+rightBuffer+1]}|')
+            print('+-------+')
+
 
             # check left
             if index != 0:
@@ -28,7 +49,6 @@ def main():
                 if num != None:
                     setGear(num)
 
-            # TODO: update up and down
             # check top 3
             if lineIndex != 0:
                 startbuffer = 0
@@ -37,32 +57,32 @@ def main():
                     startbuffer = 1
                 if index+1 < len(line):
                     endbuffer = 1
-                isPartNumber = False
-                for tempIndex in range(index-startbuffer, index+numLength+endbuffer):
-                    if parts[lineIndex-1][tempIndex] != '.' and not parts[lineIndex-1][tempIndex].isdigit():
-                        isPartNumber = True
-                        print(f'{partNumber} is touching {parts[lineIndex-1][tempIndex]}')
-                        partNumberSum += partNumber
-                        break
-                if(isPartNumber):
-                    isPartNumber = False
-                    continue
-                
-            # check down along length
+                for tempIndex in range(index-startbuffer, index+endbuffer+1):
+                    num = getNum(lineIndex-1, tempIndex)
+                    if num != None:
+                        setGear(num)
+                        # check if two numers on top is possible
+                        if parts[lineIndex-1][tempIndex+1].isdigit():
+                            break
+                    
+
+            # check bottom 3
             if lineIndex != len(line)-1:
                 startbuffer = 0
                 endbuffer = 0
                 if index != 0:
                     startbuffer = 1
-                if index+numLength < len(line):
+                if index+1 < len(line):
                     endbuffer = 1
-                for tempIndex in range(index-startbuffer, index+numLength+endbuffer):
-                    if parts[lineIndex+1][tempIndex] != '.' and not parts[lineIndex+1][tempIndex].isdigit():
-                        print(f'{partNumber} is touching {parts[lineIndex+1][tempIndex]}')
-                        partNumberSum += partNumber
-                        break
+                for tempIndex in range(index-startbuffer, index+endbuffer+1):
+                    num = getNum(lineIndex+1, tempIndex)
+                    if num != None:
+                        setGear(num)
+                        # check if two numers on top is possible
+                        if parts[lineIndex+1][tempIndex+1].isdigit():
+                            break
 
-    print(f'Sum: {partNumberSum}')
+    print(f'Sum: {gearRatioSum}')
 
 
 def getNum(lineIndex, index):
@@ -75,17 +95,21 @@ def getNum(lineIndex, index):
 
     startIndex = index
     while(startIndex > 0):
-        if parts[lineIndex][startIndex-1].isdigit():
-            startIndex -= 1
+        if not parts[lineIndex][startIndex-1].isdigit():
+            break
+        startIndex -= 1
 
     endIndex = index
-    while(endIndex < len(parts[lineIndex])):
-        if parts[lineIndex][endIndex+1].isdigit():
-            endIndex += 1
+    while(endIndex < len(parts[lineIndex])-1):
+        if not parts[lineIndex][endIndex+1].isdigit():
+            break
+        endIndex += 1
 
     return int(parts[lineIndex][startIndex:endIndex+1])
 
 def setGear(num):
+    global gearOne
+    global gearTwo
     if gearOne == None:
         gearOne = num
         print(f'Gear One: {num}')
