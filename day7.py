@@ -78,25 +78,35 @@ class Hand:
         if card == 'Q':
             return 12
         if card == 'J':
-            return 11
+            return 1
         if card == 'T':
             return 10
         else:
             print(f'The card {card} is unknown')
     
     def getType(self):
-        quantity = self.orderCards()
+        cardInfo = self.orderCards()
+        cards = cardInfo[0]
+        quantity = cardInfo[1]
+        if 'J' in cards:
+            jCount = quantity.pop(cards.index('J'))
+            cards.remove('J')
+            if len(quantity) > 0:
+                maxCount = max(quantity)
+                quantity[quantity.index(maxCount)] += jCount
+            else:
+                quantity.append(jCount)
         if 5 in quantity:
             return FIVE
-        if 4 in quantity:
+        elif 4 in quantity:
             return FOUR
-        if 3 in quantity and 2 in quantity:
+        elif 3 in quantity and 2 in quantity:
             return FULL
-        if 3 in quantity:
+        elif 3 in quantity:
             return THREE
-        if quantity.count(2) == 2:
+        elif quantity.count(2) == 2:
             return TWO
-        if quantity.count(2) == 1:
+        elif quantity.count(2) == 1:
             return ONE
         else:
             return HIGH
@@ -119,7 +129,7 @@ class Hand:
                 cards.append(card)
                 quantity.append(1)
                 continue
-        return quantity
+        return [cards, quantity]
 
 
             
