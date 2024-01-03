@@ -4,24 +4,20 @@ test = False
 time = []
 distance = []
 if test:
-    time =     [7, 15, 30]
-    distance = [9, 40, 200]
+    time =     71530
+    distance = 940200
 else:
-    time =     [50,  74,   86,   85]
-    distance = [242, 1017, 1691, 1252]
+    time =     50748685
+    distance = 242101716911252
 
 def main():
     starttime = measureTime.time()
     possibleWins = []
-    for index, raceTime in enumerate(time):
-        record = distance[index]
-        print(raceTime)
-        print(record)
-        possibleRace = 0
-        for buttonTime in range(raceTime):
-            if getDistance(buttonTime, raceTime) > record:
-                possibleRace += 1
-        possibleWins.append(possibleRace)
+    possibleRace = 0
+    for buttonTime in range(time):
+        if getDistance(buttonTime, time) > distance:
+            possibleRace += 1
+    possibleWins.append(possibleRace)
 
     score = calculateScore(possibleWins)
     print(f'Score: {score}')
