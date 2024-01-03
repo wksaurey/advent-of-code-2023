@@ -30,8 +30,6 @@ def calculateScore(possibleWins):
         score = score * possibleRaces
     return score
 
-
-
 def getDistance(buttonTime, raceTime):
     return buttonTime * (raceTime - buttonTime)
 
