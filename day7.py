@@ -131,8 +131,4 @@ class Hand:
                 continue
         return [cards, quantity]
 
-
-            
-
-
 main()
