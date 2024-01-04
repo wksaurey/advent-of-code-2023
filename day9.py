@@ -2,6 +2,7 @@ import time
 from util import read_stripped_lines
 
 def main():
+    starttime = time.time()
     dataSets = [list(map(int, set.split())) for set in read_stripped_lines('input/day9.text')]
     print(dataSets)
 
@@ -12,6 +13,8 @@ def main():
         print(f'Extrapolated Value: {extrapolatedValue}')
         extrapolatedSum += extrapolatedValue
     print(f'Extrapolated Sum: {extrapolatedSum}')
+    endtime = time.time()
+    print(f'Run in {endtime-starttime} seconds')
 
 def getExtrapolatedValue(derivatives):
     for index, derivative in enumerate(reversed(derivatives)):
