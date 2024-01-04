@@ -1,17 +1,69 @@
-seeds = '2906961955 52237479 1600322402 372221628 2347782594 164705568 541904540 89745770 126821306 192539923 3411274151 496169308 919015581 8667739 654599767 160781040 3945616935 85197451 999146581 344584779'
-seeds = seeds.split()
+import time
+filename = 'input/day5.text'
 
-seedToSoil = '''2328388605 1716277852 240111965
-3183744888 3056742994 1057221520
-0 1574488136 141789716
-886579086 0 430196980
-141789716 2525350732 49125971
-881053613 1956389817 5525473
-3131936012 3013025394 43717600
-629464378 1322898901 251589235
-2568500570 1961915290 563435442
-190915687 2574476703 438548691
-3175653612 4113964514 8091276
-1435686684 430196980 892701921
-1316776066 4122055790 118910618'''
-seedToSoil = seedToSoil.split('\n')
+def main():
+    starttime = time.time()
+    seeds = getSeeds()
+    conversions = getConversions()
+
+    START = 0
+    RANGE = 1
+    DELTA = 2
+
+    for conversionIndex, conversionValues in enumerate(conversions):
+        print(f'Current Conversion: {conversionValues}')
+        print(f'Initial Seeds: {seeds}')
+        print('', end='')
+        for seedIndex, seedRange in enumerate(seeds):
+            for conversionRange in conversionValues:
+                # start of conversion range is in seed range (not ends)
+                if conversionRange[START] > seedRange[START] and conversionRange[START] < seedRange[START] + seedRange[RANGE]-1:
+                    seeds[seedIndex] = [seedRange[START], conversionRange[START]-seedRange[START]]
+                    seeds.append([conversionRange[START], seedRange[RANGE] - seeds[seedIndex][RANGE]])
+                # end of conversion range is in seed range (not ends)
+                if conversionRange[START] + conversionRange[RANGE]-1 > seedRange[START] and conversionRange[START] + conversionRange[RANGE]-1 < seedRange[START] + seedRange[RANGE]-1:
+                    seeds[seedIndex] = [seedRange[START], conversionRange[START] + conversionRange[RANGE] - seedRange[START]]
+                    seeds.append([conversionRange[START] + conversionRange[RANGE], seedRange[RANGE] - seeds[seedIndex][RANGE]])
+                # whole range is bounded by conversion range, so update the whole range
+                if seeds[seedIndex][START] >= conversionRange[START] and seeds[seedIndex][START] + seeds[seedIndex][RANGE]-1 <= conversionRange[START] + conversionRange[RANGE]-1:
+                    seeds[seedIndex][START] = seedRange[START]+conversionRange[DELTA]
+                    break
+
+        print(f'Changed Seeds: {seeds}')
+        print()
+
+
+    minLocation = seeds[0][START]
+    for seedRange in seeds:
+        minLocation = min(minLocation, seedRange[START])
+    print(f'Closest Location: {minLocation}')
+    endtime = time.time()
+    print(f'Run in {endtime-starttime} seconds')
+
+def getSeeds(): 
+    seeds = []
+    with open(filename) as file:
+        line = file.readline()
+        seedValues = list(map(int, line.split(':')[1].strip().split()))
+        for seedIndex, seedValue in enumerate(seedValues):
+            if seedIndex % 2 != 0 :
+                continue
+            seeds.append([seedValue, seedValues[seedIndex+1]])
+    return seeds
+
+def getConversions():
+    conversions = []
+    with open(filename) as file:
+        for line in file:
+            if line == '\n':
+                continue
+            if ':' in line:
+                if 'map' in line:
+                    conversions.append([])
+            else:
+                values = list(map(int, line.strip().split()))
+                conversions[-1].append([values[1], values[2], values[0]-values[1]])
+    return conversions
+
+main()
+>>>>>>> refs/remotes/origin/main
