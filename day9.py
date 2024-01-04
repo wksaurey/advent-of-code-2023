@@ -7,7 +7,7 @@ def main():
 
     extrapolatedSum = 0
     for dataSet in dataSets:
-        derivatives = getDerivatives(dataSet)
+        derivatives = getDerivatives(list(reversed(dataSet)))
         extrapolatedValue = getExtrapolatedValue(derivatives)
         print(f'Extrapolated Value: {extrapolatedValue}')
         extrapolatedSum += extrapolatedValue
