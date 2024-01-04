@@ -66,4 +66,3 @@ def getConversions():
     return conversions
 
 main()
->>>>>>> refs/remotes/origin/main
