@@ -23,10 +23,10 @@ def main():
         lastMove = info['lastMove']
         coordinateInfo = getNextCoordinates(coordinates, lastMove)
         coordinates = coordinateInfo['coordinates']
-        lastMove = coordinateINfo['lastMove']
+        lastMove = coordinateInfo['lastMove']
         showArea(coordinates)
         stepCount += 1
-        queue.append({'coordinates': coordinates, 'stepCount': stepCount, 'lastMove':)
+        queue.append({'coordinates': coordinates, 'stepCount': stepCount, 'lastMove':lastMove})
     print(f'Total steps: {stepCount}')
     
 def getNextCoordinates(coordinates, lastMove):
@@ -48,28 +48,35 @@ def getNextCoordinates(coordinates, lastMove):
 
     if topbuffer:
         pipe = pipeMap[coordinates[Y]-topbuffer][coordinates[X]]
+        if pipe == 'S':
+            reachedEnd = True
         if 'S' in getConnections(pipe):
             lastMove = 'S'
-            return {'coordinates': coordinates[Y]-topbuffer, coordinates[X], 'lastMove': lastMove}
+            return {'coordinates': [coordinates[Y]-topbuffer, coordinates[X]], 'lastMove': lastMove}
     if bottombuffer:
         pipe = pipeMap[coordinates[Y]+bottombuffer][coordinates[X]]
+        if pipe == 'S':
+            reachedEnd = True
         if 'N' in getConnections(pipe):
             lastMove = 'N'
-            return {'coordinates': coordinates[Y]+bottombuffer, coordinates[X], 'lastMove': lastMove}
+            return {'coordinates': [coordinates[Y]+bottombuffer, coordinates[X]], 'lastMove': lastMove}
     if leftbuffer:
         pipe = pipeMap[coordinates[Y]][coordinates[X]-leftbuffer]
+        if pipe == 'S':
+            reachedEnd = True
         if 'E' in getConnections(pipe):
             lastMove = 'E'
-            return {'coordinates': coordinates[Y], coordinates[X]-leftbuffer, 'lastMove': lastMove}
+            return {'coordinates': [coordinates[Y], coordinates[X]-leftbuffer], 'lastMove': lastMove}
     if rightbuffer:
         pipe = pipeMap[coordinates[Y]][coordinates[X]+rightbuffer]
+        if pipe == 'S':
+            reachedEnd = True
         if 'W' in getConnections(pipe):
             lastMove = 'W'
-            return {'coordinates': coordinates[Y], coordinates[X]+rightbuffer, 'lastMove': lastMove}
+            return {'coordinates': [coordinates[Y], coordinates[X]+rightbuffer], 'lastMove': lastMove}
     else:
-        # check for S
-        reachedEnd = True
         showArea(coordinates)
+        print('Something went wrong')
 
 
 def getConnections(pipe):
