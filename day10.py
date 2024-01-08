@@ -7,26 +7,29 @@ coors = 0
 steps = 1
 
 pipeMap = read_stripped_lines('input/day10test.text')
-lastMove = 'A'
 reachedEnd = False
 
 def main():
     totalSteps = 0
     coordinates = findStart()
     showArea(coordinates)
-    queue = [[coordinates, 0]]
-    # todo: create queuet to check every possible combination until it either dead-ends or finds the 'S'
+    # queue = [[coords, stepcount, lastmove]]
+    queue = [{'coordinates': coordinates, 'stepCount': 0, 'lastMove': 'A'}]
+    # todo: create queue to check every possible combination until it either dead-ends or finds the 'S'
     while not reachedEnd:
         info = queue.pop(0)
-        totalSteps = info[steps]
-        coordinates = getNextCoordinates(coordinates)
+        coordinates = info['coordinates']
+        stepCount = info['stepCount']
+        lastMove = info['lastMove']
+        coordinateInfo = getNextCoordinates(coordinates, lastMove)
+        coordinates = coordinateInfo['coordinates']
+        lastMove = coordinateINfo['lastMove']
         showArea(coordinates)
-        totalSteps += 1
-        queue.append([coordinates, totalSteps])
-    print(f'Total steps: {totalSteps}')
+        stepCount += 1
+        queue.append({'coordinates': coordinates, 'stepCount': stepCount, 'lastMove':)
+    print(f'Total steps: {stepCount}')
     
-def getNextCoordinates(coordinates):
-    global lastMove
+def getNextCoordinates(coordinates, lastMove):
     global reachedEnd
     topbuffer = 0
     bottombuffer = 0
@@ -47,22 +50,22 @@ def getNextCoordinates(coordinates):
         pipe = pipeMap[coordinates[Y]-topbuffer][coordinates[X]]
         if 'S' in getConnections(pipe):
             lastMove = 'S'
-            return [coordinates[Y]-topbuffer, coordinates[X]]
+            return {'coordinates': coordinates[Y]-topbuffer, coordinates[X], 'lastMove': lastMove}
     if bottombuffer:
         pipe = pipeMap[coordinates[Y]+bottombuffer][coordinates[X]]
         if 'N' in getConnections(pipe):
             lastMove = 'N'
-            return [coordinates[Y]+bottombuffer, coordinates[X]]
+            return {'coordinates': coordinates[Y]+bottombuffer, coordinates[X], 'lastMove': lastMove}
     if leftbuffer:
         pipe = pipeMap[coordinates[Y]][coordinates[X]-leftbuffer]
         if 'E' in getConnections(pipe):
             lastMove = 'E'
-            return [coordinates[Y], coordinates[X]-leftbuffer]
+            return {'coordinates': coordinates[Y], coordinates[X]-leftbuffer, 'lastMove': lastMove}
     if rightbuffer:
         pipe = pipeMap[coordinates[Y]][coordinates[X]+rightbuffer]
         if 'W' in getConnections(pipe):
             lastMove = 'W'
-            return [coordinates[Y], coordinates[X]+rightbuffer]
+            return {'coordinates': coordinates[Y], coordinates[X]+rightbuffer, 'lastMove': lastMove}
     else:
         # check for S
         reachedEnd = True
